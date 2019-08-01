@@ -7,13 +7,21 @@ fi
 
 # User specific environment
 PATH="$HOME/.local/bin:$HOME/bin:$PATH"
+export KUBECONFIG="/home/apolak/ocs_test1/auth/kubeconfig"
 export PATH
 #enable auto complation for kubectl
 source <(kubectl completion bash)
+source <(oc completion bash)
 # Uncomment the following line if you don't like systemctl's auto-paging feature:
 # export SYSTEMD_PAGER=
 
 # User specific aliases and functions
+
+if [[ $COLORTERM = gnome-* && $TERM = xterm ]] && infocmp gnome-256color >/dev/null 2>&1; then
+	export TERM='gnome-256color';
+elif infocmp xterm-256color >/dev/null 2>&1; then
+	export TERM='xterm-256color';
+fi;
 
 prompt_git() {
     local s=""
@@ -65,61 +73,43 @@ prompt_git() {
     fi
 }
 
-set_prompts() {
-    local black=""
-    local blue=""
-    local bold=""
-    local cyan=""
-    local green=""
-    local orange=""
-    local purple=""
-    local red=""
-    local reset=""
-    local white=""
-    local yellow=""
 
-    local hostStyle=""
-    local userStyle=""
+tput sgr0 # reset colors
 
-    tput sgr0 # reset colors
+bold=$(tput bold)
+reset=$(tput sgr0)
 
-    bold=$(tput bold)
-    reset=$(tput sgr0)
+black=$(tput setaf 0)
+blue=$(tput setaf 33)
+cyan=$(tput setaf 37)
+green=$(tput setaf 64)
+orange=$(tput setaf 166)
+purple=$(tput setaf 125)
+red=$(tput setaf 124)
+white=$(tput setaf 15)
+yellow=$(tput setaf 136)
 
-    black=$(tput setaf 0)
-    blue=$(tput setaf 33)
-    cyan=$(tput setaf 37)
-    green=$(tput setaf 64)
-    orange=$(tput setaf 166)
-    purple=$(tput setaf 125)
-    red=$(tput setaf 124)
-    white=$(tput setaf 15)
-    yellow=$(tput setaf 136)
+# build the prompt
 
-    # build the prompt
+# logged in as root
+if [[ "$USER" == "root" ]]; then
+    userStyle="\[$bold$red\]"
+else
+    userStyle="\[$orange\]"
+fi
 
-    # logged in as root
-    if [[ "$USER" == "root" ]]; then
-        userStyle="\[$bold$red\]"
-    else
-        userStyle="\[$orange\]"
-    fi
+# connected via ssh
+if [[ "$SSH_TTY" ]]; then
+    hostStyle="\[$bold$red\]"
+else
+    hostStyle="\[$yellow\]"
+fi
 
-    # connected via ssh
-    if [[ "$SSH_TTY" ]]; then
-        hostStyle="\[$bold$red\]"
-    else
-        hostStyle="\[$yellow\]"
-    fi
+PS1="[\[$orange\]\u@\[$yellow\]\h"]
+PS1+="\[$green\]\W" # working directory
+PS1+="\$(prompt_git \"$reset on $white\")" # git repository details
+PS1+="\[$reset$white\]\$ \[$reset\]" # $ (and reset color)
 
-    # set the terminal title to the current working directory
-    PS1="[\[$orange\]\u@\[$yellow\]\h"]
-    PS1+="\[$green\]\W" # working directory
-    PS1+="\$(prompt_git \"$reset on $white\")" # git repository details
-    PS1+="\[$reset$white\]\$ \[$reset\]" # $ (and reset color)
+export PS1
 
-    export PS1
-}
 
-set_prompts
-unset set_prompts
