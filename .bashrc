@@ -15,6 +15,9 @@ source <(oc completion bash)
 
 #Aliases
 alias ap_venv="source ~/ocs-ci/ap_venv/bin/activate"
+alias flask_venv="source ~/flask_blog/flask_venv/bin/activate"
+alias ghistory="history |grep git"
+alias gstat="git status"
 
 # Uncomment the following line if you don't like systemctl's auto-paging feature:
 # export SYSTEMD_PAGER=
