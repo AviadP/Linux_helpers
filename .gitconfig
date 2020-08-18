@@ -1,6 +1,6 @@
 [user]
-	name = aviadp
-	email = apolak@redhat.com
+	name = NAME
+	email = EMAIL@MAIL.COM
 
 [core]
   editor = vim
